@@ -1,5 +1,6 @@
 # gdal-pansharpening
 Perform High-Pass Filter (HPF) pansharpening formula in a multispectral image.
+It's developed in both, R and Python languages.
 
 ## Technique
 The HPF is applied following the formula created by Schowengerdt, 1980. 
@@ -58,3 +59,53 @@ A 5 x 5 kernel is applied (Gangkofner et al., 2007).
   -1, -1, -1, -1, -1
 ) / 25
 ```
+
+## R
+
+The high resolution's spatial component is computed by
+[focal function](https://www.rdocumentation.org/packages/raster/versions/3.5-15/topics/focal)
+from `raster` package. The *nodata* values in original image
+are transformed into `NA` format. When `focal` function is applied,
+if the *kernel* contains `NA` data it will return a `NA` data.
+
+Formula is applied for each multispectral band which is transformed
+in `rasterLayer` objects. The new pansharpened bands are saved in the
+output directory, and then are merged in a new file.
+Finally individual bands are removed.
+
+## Python
+
+Required modules:
+
+- Scipy
+- GDAL (installed in conda with `forge`)
+
+Raster images are saved in `numpy` arrays with GDAL functions. The *nodata*
+values are converted in `NaN` data, so if convolve kernel contains one of
+these the output value will be a `NaN` data.
+
+Spatial component of high resolution image is derived by `ndimage.convolve`
+function from `scipy` package. Selected parameters:
+
+- `mode='constant'` : Edges (i.e. pixels where applied *kernel*
+exceed image limits) are matched to `cval`.
+- `cval=np.nan` : The edges are interpreted as `NaN`. **Important:**
+`NaN` data can only be inserted in arrays with type *float*.
+
+HPF formula is applied as follows:
+
+1. Create empty raster with same shape as original multispectral image.
+2. Perform HPF formula for each band.
+3. Transform `NaN` values to original *nodata* value.
+4. Write each pansharpened band inside empty raster (step 1) 
+
+## References
+
+Amro, I., Mateos, J., Vega, M., Molina, R., & Katsaggelos, A. K. (2011). A survey of classical methods and new trends in pansharpening of multispectral images. EURASIP Journal on Advances in Signal Processing, 2011(1), 79. https://doi.org/10.1186/1687-6180-2011-79
+
+Gangkofner, U. G., Pradhan, P. S., & Holcomb, D. W. (2007). Optimizing the High-Pass Filter Addition Technique for Image Fusion. Photogrammetric Engineering & Remote Sensing, 73(9), 1107-1118. https://doi.org/10.14358/PERS.73.9.1107
+
+Schowengerdt, R. A. (1980). Reconstruction of Multispatial, MuItispectraI Image Data Using Spatial Frequency Content. Photogrammetric Engineering and Remote Sensing, 46(10), 1325-1334.
+
+Yuhendra, Alimuddin, I., Sumantyo, J. T. S., & Kuze, H. (2012). Assessment of pan-sharpening methods applied to image fusion of remotely sensed multi-band data. International Journal of Applied Earth Observation and Geoinformation, 18, 165-175. https://doi.org/10.1016/j.jag.2012.01.013
+
