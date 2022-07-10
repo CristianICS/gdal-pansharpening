@@ -1,6 +1,6 @@
 # gdal-pansharpening
 Perform High-Pass Filter (HPF) pansharpening formula in a multispectral image.
-It's developed in both, R and Python languages.
+It's developed for both, R and Python languages.
 
 ## Technique
 The HPF is applied following the formula created by Schowengerdt, 1980. 
