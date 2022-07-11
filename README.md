@@ -114,7 +114,7 @@ gdalwarp -of GTiff -ot Float32 -r cubicspline -co COMPRESS=DEFLATE
 -co PREDICTOR=3 -tr {pan_resX} {pan_resY}
 -te {xmin ymin xmax ymax} -t_srs EPSG:32642 -overwrite
 "disc:\path\test\mul.tif"
-"disc:\path\test\mul_resizePython.tif"
+"disc:\path\test\mul_resize.tif"
 ```
 
 *Note: Both -tr and -te options are filled with pan resolution and bounding box.*
