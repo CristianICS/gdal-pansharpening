@@ -27,7 +27,8 @@ anthropogenic use are based on the color, which varies between the bands.
 ### Low resolution image
 
 The parameter L<sub>i,j</sub> is derived warping the low resolution image by 
-high image resolution and extent. The `gdalwarp` tool should be applied:
+high image resolution and extent. The [`gdalwarp`](https://gdal.org/programs/gdalwarp.html)
+tool should be applied:
 
 ```
 gdalwarp -of GTiff -ot Float32 -r cubicspline -co COMPRESS=DEFLATE -co PREDICTOR=3
@@ -98,6 +99,25 @@ HPF formula is applied as follows:
 2. Perform HPF formula for each band.
 3. Transform `NaN` values to original *nodata* value.
 4. Write each pansharpened band inside empty raster (step 1) 
+
+## Test data
+
+Multispectral (mul.tif) and Panchromatic (pan.tif) files are extracted from a World View 3 image, with resolutions of 1.24m (mul) and 0.3m (pan).
+
+The images have radiometric and atmospheric corrections (DOS method, Chavez).
+
+Python code performs the multispectral image resizing automatically, but the R code doesn't. To apply resizing the
+[gdalwarp tool](https://gdal.org/programs/gdalwarp.html) could be applied.
+
+```
+gdalwarp -of GTiff -ot Float32 -r cubicspline -co COMPRESS=DEFLATE
+-co PREDICTOR=3 -tr {pan_resX} {pan_resY}
+-te {xmin ymin xmax ymax} -t_srs EPSG:32642 -overwrite
+"disc:\path\test\mul.tif"
+"disc:\path\test\mul_resizePython.tif"
+```
+
+*Note: Both -tr and -te options are filled with pan resolution and bounding box.*
 
 ## References
 
