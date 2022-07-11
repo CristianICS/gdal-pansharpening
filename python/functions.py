@@ -17,7 +17,7 @@ def read_raster(path: str, nodata=None):
     Parse raster as numpy array with raster dimensions.
     Important: The nodata value will be replaced as
     numpy.nan data.
-    
+
     Important: The default datatype is float32
 
     Example: Raster with 5 bands, 30 rows and 25 columns
@@ -95,7 +95,7 @@ def high_pass_filter(array):
     # The convolve function only works if kernel shape is equal
     # array shape.
     k = []
-    print(array.shape)
+
     for b in range(0,array.shape[0]):
         k.append(highPassMatrix)
     k = np.stack(k)
@@ -136,7 +136,7 @@ def pansharpening(mul_resize: str, pan: str, outPath: str, nodata):
 
     # Create empty raster
     creation_options = ['COMPRESS=DEFLATE','PREDICTOR=3']
-    tmp_file = os.path.normapth(outPath),
+    tmp_file = os.path.normpath(outPath)
     driver = gdal.GetDriverByName("GTiff")
     out_img = driver.Create(
         str(tmp_file),
@@ -147,18 +147,24 @@ def pansharpening(mul_resize: str, pan: str, outPath: str, nodata):
         options=creation_options
     )
 
+    print(f"Start image {os.path.basename(mul_resize)} pansharpening:")
+
     # Pan image has 3D size, get the first band (and the only one)
     pan_arr2d = pan_arr[0,:,:]
     pan_spatial2d = pan_spatial[0,:,:]
     # Compute pansharpening on each MUL band
     for i in range(0, n_bands):
         band = mul_arr[i,:,:]
+
+        print(f"..Band {i+1}, shape ", band.shape)
+
         # HPF pansharpening function
         pansharpen = band + (pan_arr2d - pan_spatial2d)
         # Replace NaN values with nodata
         pansharpen[np.isnan(pansharpen)] = nodata
 
         # Save band
+        print("..Write band")
         pansharpen_band = out_img.GetRasterBand(i+1)
         if nodata is not None:
             pansharpen_band.SetNoDataValue(nodata)

@@ -1,6 +1,17 @@
 # Source: https://stackoverflow.com/a/21313276
 # After writing this function I've learned
 # that iterators are very inefficient in R.
+packages = c("iterators", 'itertools')
+
+package.check <- lapply(
+  packages,
+  FUN = function(x) {
+    if (!require(x, character.only = T)) {
+      install.packages(x, dependencies = T)
+      library(x, character.only = T)
+    }
+  }
+)
 library("iterators")
 # install.packages("itertools")
 library("itertools")
