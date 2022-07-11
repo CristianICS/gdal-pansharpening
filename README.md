@@ -1,4 +1,4 @@
-# gdal-pansharpening
+# gdal-pansharpening-hpf
 Perform High-Pass Filter (HPF) pansharpening formula in a multispectral image.
 It's developed for both, R and Python languages.
 
