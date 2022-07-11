@@ -104,7 +104,7 @@ HPF formula is applied as follows:
 
 Multispectral (mul.tif) and Panchromatic (pan.tif) files are extracted from a World View 3 image, with resolutions of 1.24m (mul) and 0.3m (pan).
 
-The images have radiometric and atmospheric corrections (DOS method, Chavez).
+The images have radiometric and atmospheric corrections (DOS method - Chavez, 1989).
 
 Python code performs the multispectral image resizing automatically, but the R code doesn't. To apply resizing the
 [gdalwarp tool](https://gdal.org/programs/gdalwarp.html) could be applied.
@@ -122,6 +122,8 @@ gdalwarp -of GTiff -ot Float32 -r cubicspline -co COMPRESS=DEFLATE
 ## References
 
 Amro, I., Mateos, J., Vega, M., Molina, R., & Katsaggelos, A. K. (2011). A survey of classical methods and new trends in pansharpening of multispectral images. EURASIP Journal on Advances in Signal Processing, 2011(1), 79. https://doi.org/10.1186/1687-6180-2011-79
+
+Chavez, P.S., 1989. Radiometric calibration of Landsat Thematic Mapper multispectral images. Photogrammetric engineering and remote sensing 55, 1285–1294.
 
 Gangkofner, U. G., Pradhan, P. S., & Holcomb, D. W. (2007). Optimizing the High-Pass Filter Addition Technique for Image Fusion. Photogrammetric Engineering & Remote Sensing, 73(9), 1107-1118. https://doi.org/10.14358/PERS.73.9.1107
 
