@@ -7,9 +7,9 @@ Outputs:            Pansharpened image.
 ____________________________________________________________________________"""
 # Parameters
 # -----------------------------------------------------------------------------
-mul_img = "./test/mul.tif"
-pan_img = "./test/pan.tif"
-out_img = "./test/pansharp_py.tif"
+mul_img = "../test/mul.tif"
+pan_img = "../test/pan.tif"
+out_img = "../test/pansharp_py.tif"
 nodata = 0
 
 # Main script
@@ -17,6 +17,11 @@ nodata = 0
 # Import packages
 import os
 import functions
+
+cwd = os.path.abspath(os.path.join(__file__,os.pardir))
+mul_img = os.path.abspath(os.path.join(cwd,mul_img))
+pan_img = os.path.abspath(os.path.join(cwd,pan_img))
+out_img = os.path.abspath(os.path.join(cwd,out_img))
 
 # GDAL command to resize multispectral image
 gdal_warp = (
@@ -35,11 +40,11 @@ mulname = os.path.basename(mul_img)
 muldir = os.path.dirname(mul_img)
 mul_img_resized = os.path.join(
     os.path.normpath(muldir),
-    mulname.split('.')[0] + '_resize.tif'
+    mulname.split('.')[0] + '_resizePython.tif'
 )
 
 # Apply gdalwarp
-if (not os.path.exists(mul_img_resized)) {
+if (not os.path.exists(mul_img_resized)):
     gdal_warp_resolved = ' '.join(gdal_warp).format(
         xmin = bbox[0],
         xmax = bbox[2],
@@ -52,8 +57,8 @@ if (not os.path.exists(mul_img_resized)) {
     )
     print(gdal_warp_resolved)
     os.system(gdal_warp_resolved)
-}
+
 
 # Pansharpening
 # -----------------------------------------------------------------------------
-functions.pansharpening(mul_img_resized, pan_img, out_image, nodata)
+# functions.pansharpening(mul_img_resized, pan_img, out_img, nodata)

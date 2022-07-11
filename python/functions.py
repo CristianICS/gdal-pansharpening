@@ -61,7 +61,7 @@ def get_bbox(path: str) -> dict:
     return [minx, miny, maxx, maxy, resx, resy]
     """
     src_ds = gdal.Open(str(path), gdal.GA_ReadOnly)
-
+    geoTrans = src_ds.GetGeoTransform()
     # Get BBOX parameters
     resX = geoTrans[1]
     resY = geoTrans[5]
