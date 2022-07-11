@@ -15,8 +15,8 @@ where:
 * H<sub>i,j</sub>: Pixel value in high resolution image
 * mean(H<sub>i,j(w,h)</sub>): stands for the local mean of high resolution
 channel inside the window of w (width) x h (height) pixels centered at (i, j) (Yuhendra et al., 2012).
-In other words, the pixel value in i,j coords inside the image filled with
-the spatial component of the high resolution image derived from a convolutional filter.
+In other words, this value corresponds with pixel in i,j coords inside the image with
+the spatial component of the high resolution image, which is derived from a convolutional filter.
 
 **Important:** HPF technique is based on surface information, i.e.,
 correlation between all image bands and its edges. These will remain unchanging.
