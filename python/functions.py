@@ -12,7 +12,7 @@ from dask import array as da
 from scipy import ndimage
 
 # Save raster image as numpy array
-def read_raster(path: str, nodata=None):
+def read_raster(path: str):
     """
     Parse raster as numpy array with raster dimensions.
     Important: The nodata value will be replaced as
@@ -43,6 +43,7 @@ def read_raster(path: str, nodata=None):
         # Transform image band into numpy array
         ds = src_ds.GetRasterBand(band).ReadAsArray().astype(np.float32)
         # Fill nodata values with NaN
+        nodata = src_ds.GetRasterBand(band).GetNoDataValue()
         ds[ds == nodata] = np.nan
         # Add band to a list
         raw_image.append(ds)
@@ -105,20 +106,19 @@ def high_pass_filter(array):
 
     return convolve_image
 
-def pansharpening(mul_resize: str, pan: str, outPath: str, nodata):
+def pansharpening(mul_resize: str, pan: str, outPath: str):
     """
     Compute pansharpening with High Pass Filter technique
 
     :mul_resize: MUL image resized path.
     :pan: Original PAN image path
     :outPath: File output path
-    :nodata: Raster nodata value.
     """
     # init dask as threads (shared memory is required)
     dask.config.set(pool=ThreadPool(1))
 
     # PAN image
-    pan_arr, projection, geoTrans = read_raster(pan, nodata)
+    pan_arr, projection, geoTrans = read_raster(pan)
 
     # PAN spatial component
     pan_spatial = high_pass_filter(pan_arr)
@@ -161,6 +161,7 @@ def pansharpening(mul_resize: str, pan: str, outPath: str, nodata):
         # HPF pansharpening function
         pansharpen = band + (pan_arr2d - pan_spatial2d)
         # Replace NaN values with nodata
+        nodata = gdal.Open(str(mul_resize), gdal.GA_ReadOnly).GetRasterBand(i+1).GetNoDataValue()
         pansharpen[np.isnan(pansharpen)] = nodata
 
         # Save band
