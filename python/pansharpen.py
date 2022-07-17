@@ -10,7 +10,6 @@ ____________________________________________________________________________"""
 mul_img = "../test/mul.tif"
 pan_img = "../test/pan.tif"
 out_img = "../test/pansharp_py.tif"
-nodata = 0
 
 # Main script
 # -----------------------------------------------------------------------------
@@ -61,4 +60,4 @@ if (not os.path.exists(mul_img_resized)):
 
 # Pansharpening
 # -----------------------------------------------------------------------------
-functions.pansharpening(mul_img_resized, pan_img, out_img, nodata)
+functions.pansharpening(mul_img_resized, pan_img, out_img)
