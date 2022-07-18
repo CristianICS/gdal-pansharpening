@@ -37,20 +37,28 @@ def read_raster(path: str):
 
     projection = src_ds.GetProjection()
     geoTrans = src_ds.GetGeoTransform()
-
+    
+    print("..Read raster")
+    nodata = None
     # Write each band in a numpy array
     for band in range(1,n_bands + 1):
         # Transform image band into numpy array
         ds = src_ds.GetRasterBand(band).ReadAsArray().astype(np.float32)
+
+        nodata_value = src_ds.GetRasterBand(band).GetNoDataValue()
+        if nodata is None:
+            nodata = nodata_value
+        elif nodata != nodata_value:
+            raise ValueError("Image nodata value must be equal in all bands.")
+        print(f"....Band {band} nodata value: {nodata}")
         # Fill nodata values with NaN
-        nodata = src_ds.GetRasterBand(band).GetNoDataValue()
         ds[ds == nodata] = np.nan
         # Add band to a list
         raw_image.append(ds)
 
     # Merge each dimension (bands) in n dimension array (n = number of bands)
     raw_image_np = da.stack(raw_image).rechunk(('auto'))
-    return (raw_image_np, projection, geoTrans)
+    return (raw_image_np, projection, geoTrans, nodata)
 
 def get_bbox(path: str) -> dict:
     """
@@ -73,7 +81,7 @@ def get_bbox(path: str) -> dict:
     lrx = ulx + (src_ds.RasterXSize * resX)
     lry = uly + (src_ds.RasterYSize * resY)
 
-    bbox = [ulx,lry,lrx, uly, resX,resY]
+    bbox = [ulx,lry,lrx, uly, resX, resY]
     return bbox
 
 def high_pass_filter(array):
@@ -118,13 +126,13 @@ def pansharpening(mul_resize: str, pan: str, outPath: str):
     dask.config.set(pool=ThreadPool(1))
 
     # PAN image
-    pan_arr, projection, geoTrans = read_raster(pan)
+    pan_arr, projection, geoTrans = read_raster(pan)[0:3]
 
     # PAN spatial component
     pan_spatial = high_pass_filter(pan_arr)
 
     # MUL resized image
-    mul_arr = read_raster(mul_resize)[0]
+    mul_arr, proj_mul, geoTrans_mul, nodata_mul = read_raster(mul_resize)
 
     # Retrieve BBOX coordinates
     bbox_pan = get_bbox(pan)
@@ -161,14 +169,14 @@ def pansharpening(mul_resize: str, pan: str, outPath: str):
         # HPF pansharpening function
         pansharpen = band + (pan_arr2d - pan_spatial2d)
         # Replace NaN values with nodata
-        nodata = gdal.Open(str(mul_resize), gdal.GA_ReadOnly).GetRasterBand(i+1).GetNoDataValue()
-        pansharpen[np.isnan(pansharpen)] = nodata
+        print(f"....Nodata: {nodata_mul}")
+        pansharpen[np.isnan(pansharpen)] = nodata_mul
 
         # Save band
         print("..Write band")
         pansharpen_band = out_img.GetRasterBand(i+1)
-        if nodata is not None:
-            pansharpen_band.SetNoDataValue(nodata)
+        if nodata_mul is not None:
+            pansharpen_band.SetNoDataValue(nodata_mul)
         pansharpen_band.WriteArray(np.array(pansharpen))
 
     # set projection and geotransform
