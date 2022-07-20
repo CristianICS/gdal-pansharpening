@@ -26,7 +26,7 @@ anthropogenic use are based on the color, which varies between the bands.
 
 ### Low resolution image
 
-The parameter L<sub>i,j</sub> is derived warping the low resolution image by 
+The L<sub>i,j</sub> parameter is derived warping the low resolution image by 
 high image resolution and extent. The [`gdalwarp`](https://gdal.org/programs/gdalwarp.html)
 tool should be applied:
 
@@ -118,6 +118,33 @@ gdalwarp -of GTiff -ot Float32 -r cubicspline -co COMPRESS=DEFLATE
 ```
 
 *Note: Both -tr and -te options are filled with pan resolution and bounding box.*
+
+## Workflow for python code (Recommended)
+
+Install [miniconda](https://docs.conda.io/en/latest/miniconda.html) and
+create new environment:
+
+```
+conda create -n pansharpening
+```
+
+Then activating the environment with `conda activate pansharpening`, and install
+following packages:
+
+- GDAL
+    ```
+    conda install -c conda-forge gdal
+    ```
+- Dask
+    ```
+    conda install -c conda-forge dask
+    ```
+- Scipy
+    ```
+    conda install -c conda-forge scipy
+    ```
+
+Finally run code with `python path/to/pyfile.py`.
 
 ## References
 
