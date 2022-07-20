@@ -146,6 +146,15 @@ following packages:
 
 Finally run code with `python path/to/pyfile.py`.
 
+## Further development
+
+The resulted product is not as good as other pansharpening technics, e.g.,
+"weighted" Brovey method. Test HPF with another *kernel* sizes to retrieve
+the spatial component of the Panchromatic image.
+
+![Comparison of PAN original image, derived HPF product and "weighted" Brovey
+method computed with gdal_pansharpen tool.](pansharp_comp.png)
+
 ## References
 
 Amro, I., Mateos, J., Vega, M., Molina, R., & Katsaggelos, A. K. (2011). A survey of classical methods and new trends in pansharpening of multispectral images. EURASIP Journal on Advances in Signal Processing, 2011(1), 79. https://doi.org/10.1186/1687-6180-2011-79
